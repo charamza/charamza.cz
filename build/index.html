@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  	<meta name="description" content="Webový vývojář a indie herní vývojář Jan Charamza - tvorba, ukázky, kontakt, ..." />
+  	<meta name="author" content="Jan Charamza" />
+  	<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
+  	<title>Jan Charamza</title>
+    <link async href="app.css" rel="stylesheet" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/img/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/img/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/img/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/img/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/img/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/img/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/img/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/img/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/img/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/icon/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/img/icon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <style type="text/css">
+      body {
+        margin: 0px;
+      }
+      .section {
+        min-height: 100vh;
+        width: 100%;
+        position: relative;
+        padding: calc(10px + 2vw);
+        box-sizing: border-box;
+        overflow-x: hidden;
+      }
+
+      .section-landingpage {
+        background-color: #1b9ab5;
+        background-image: linear-gradient(135deg, #1b9ab5 0%, #B721FF 100%);
+        background-size: cover;
+        background-position: 50% 20%;
+      }
+      .navigation {
+        display: none;
+      }
+      .navigation-vertical {
+        display: none;
+      }
+
+      .landingpage-title {
+        position: absolute;
+        bottom: 39%;
+        left: 10%;
+        font-family: 'Barlow Condensed', sans-serif;
+        text-align: left;
+        font-size: calc(16px + 1.5vw);
+        color: #fff;
+      }
+      .landingpage-description {
+        position: absolute;
+        bottom: 50%;
+        left: 10%;
+        text-align: left;
+        font-size: calc(16px + 3vw);
+        color: #fff;
+        font-family: 'Barlow Condensed', sans-serif;
+        text-transform: uppercase;
+      }
+      .landingpage-cta {
+        position: absolute;
+        left: 10%;
+        bottom: 30%;
+        color: rgba(0, 0, 0, 0.81);
+        text-decoration: none;
+        background: #fff;
+        padding: 15px 30px;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 24px;
+        border-radius: 3px;
+        box-shadow: 0 5px 9px rgba(0, 0, 0, 0.5);
+        transition: transform 0.6s, box-shadow 0.6s;
+      }
+      @media screen and (max-width: 480px) {
+        .landingpage-cta  {
+          left: 0;
+          right: 0;
+          width: 100px;
+          text-align: center;
+          margin: auto;
+          bottom: 15%;
+        }
+        .landingpage-title {
+          left: 0;
+          right: 0;
+          text-align: center;
+          bottom: 50%;
+          font-size: calc(16px + 5vw);
+        }
+        .landingpage-description {
+          text-align: center;
+          left: 0;
+          right: 0;
+          bottom: 30%;
+          font-size: calc(16px + 2vw);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <nav class="navigation">
+        <a class="navigation-item" href="#landingpage">Úvod</a>
+        <a class="navigation-item" href="#webdesign">Webové aplikace</a>
+        <a class="navigation-item" href="#games">Vývoj her</a>
+        <a class="navigation-item" href="#contact">Kontakt</a>
+      </nav>
+      <nav class="navigation-vertical">
+        <a class="navigation-item" href="#landingpage">Úvod</a>
+        <a class="navigation-item" href="#webdesign">Webové aplikace</a>
+        <a class="navigation-item" href="#games">Vývoj her</a>
+        <a class="navigation-item" href="#contact">Kontakt</a>
+      </nav>
+      <div class="navigation-hamburger">
+        <div class="navigation-hamburger-line line-1"></div>
+        <div class="navigation-hamburger-line line-2"></div>
+        <div class="navigation-hamburger-line line-3"></div>
+      </div>
+      <div id="landingpage" class="section section-landingpage">
+        <h1 class="landingpage-title">Jan Charamza</h1>
+        <h2 class="landingpage-description">Web developer<br>Frontend / Backend</h2>
+        <a class="landingpage-cta" href="#contact">Kontaktovat</a>
+        <div class="landingpage-more">
+          <img class="landingpage-more-icon" src="img/down-arrow.svg" style="top: 0px; animation-delay: 0s;" alt="Show more arrow" /><img class="landingpage-more-icon" src="img/down-arrow.svg" style="top: 16px; animation-delay: 0.25s;" alt="Show more arrow" /><img class="landingpage-more-icon" src="img/down-arrow.svg" style="top: 32px; animation-delay: 0.5s;" alt="Show more arrow" />
+        </div>
+      </div>
+      <div id="webdesign" class="section section-webdesign">
+        <div class="indent">
+          <h2 class="ch-title">Webové aplikace</h2>
+          <div class="ch-description">
+            Webdesign je má hlavní stránka byznysu. Tvořím jak vlastní projekty, 
+            tak i na zakázky a v neposlední řadě pracuji jako JavaScript vývojář.
+            <br><br>
+            Aktuálně pracuji na projektu realtime online aukcí <a target="_BLANK" href="https://livebid.cz/">Livebid.cz</a>, pro které vyvíjím webovovou stránku vytvořenou v <b>NextJS + Go</b>. 
+            Krom toho jim vyvíjím i mobilní aplikaci napsanou ve frameworku <b>Flutter</b>, umožňující pohodlnější dražbu předmětů i na cestách.
+          </div>
+          <div class="ch-images">
+            <img class="ch-image" src="img/livebid-desktop.jpg" style="border-radius: 12px;" alt="Livebid.cz on desktop browser">
+          </div>
+          <div class="ch-boxes">
+            <div class="ch-box">
+              <img class="ch-box-img" src="img/frontend.svg" width="64" height="64" alt="Frontend" alt="Web application icon">
+              <h3 class="ch-box-title">Frontend</h3>
+              <p>
+                Vytvářím interaktivní webové aplikace. Nejčastější volbou je <b>framework NextJS</b>, ale rád si hraji i s ostatními nástroji, např. Svelte, FreshJS, ...
+              </p>
+            </div>
+            <div class="ch-box">
+              <img class="ch-box-img" src="img/backend.svg" width="64" height="64" alt="Backend" alt="Backend server icon">
+              <h3 class="ch-box-title">Backend</h3>
+              <p>
+                K webové aplikaci vytvářím i plnohodnotný <b>backend</b>. Nejraději tvořím v jazyce <b>Go</b> a případně i <b>NodeJS</b> + Deno.
+              </p>
+            </div>
+            <div class="ch-box">
+              <img class="ch-box-img" src="img/mobile.svg" width="64" height="64" alt="Mobile" alt="Mobile development icon">
+              <h3 class="ch-box-title">Mobilní aplikace</h3>
+              <p>Vedle frontendu vytvořím i <b>mobilní aplikaci</b>. Pro fungování na Androidu i iOS vytvářím aplikace ve <b>Flutteru</b>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="games" class="section section-games">
+        <canvas id="canvas-game"></canvas>
+        <div class="indent">
+          <h2 class="ch-title">Vývoj her</h2>
+          <div class="ch-description">
+            Vývoji her se věnuji pouze ve svém volném čase, ale jsou hlavní důvod, 
+            proč jsem se již ve třetí třídě začal zajímat o programování.
+            <br><br>
+            Hry jsem původně psal pro desktop v Javě. 
+            S rozvojem webových technologií jsem se postupně začal zajímat i o vývoj v JavaScriptu.
+            Vyvinul jsem jednoduchou online hru <a target="_BLANK" href="http://citywars.io/">CityWars.io</a>, která je nyní již neaktivní.
+            <br><br>
+            Pro příklad uvedu i hru <a target="_BLANK" href="https://github.com/charamza/world-of-osenice">World of Osenice</a>, nebo školní projekt <a target="_BLANK" href="https://github.com/charamza/terraria">klon Terrarie</a> v Qt frameworku.
+            <br><br>
+            (Vím, že se to na tomhle pozadí čte blbě, ale stejně to nikdo číst nebude.)
+          </div>
+          <div class="ch-images">
+            <iframe 
+              id="citywars-video"
+              class="ch-image" 
+              width="260" height="345" 
+              allowfullscreen="allowfullscreen"
+              mozallowfullscreen="mozallowfullscreen" 
+              msallowfullscreen="msallowfullscreen" 
+              oallowfullscreen="oallowfullscreen" 
+              webkitallowfullscreen="webkitallowfullscreen"
+              frameBorder="0"
+              title="Youtube video of CityWars.io">
+            </iframe>
+          </div>
+          <div class="ch-boxes">
+            <div class="ch-box">
+              <img class="ch-box-img" src="img/desktop.png" width="64" height="64" alt="Desktop games">
+              <h3 class="ch-box-title">Desktop</h3>
+              <p>
+                Na desktop vyvíjím v Javě a trochu i C++. K vykreslení graficky používám technologii OpenGL. Hry na desktop jsou mnohem více plynulejší.
+              </p>
+            </div>
+            <div class="ch-box">
+              <img class="ch-box-img" src="img/browser.png" width="64" height="64" alt="Browser games">
+              <h3 class="ch-box-title">Web</h3>
+              <p>
+                Tvorbě her na webu se v poslední době věnuji nejvíce. Je jednodušší přesvědčit lidi, aby si zahráli přes odkaz, než aby si hru stáhli.
+              </p>
+            </div>
+            <div class="ch-box">
+              <img class="ch-box-img" src="img/cloud.png" width="64" height="64" alt="Multiplayer games">
+              <h3 class="ch-box-title">Server</h3>
+              <p>
+                Aby hra fungovala multiplayer, je potřeba k ní vytvořit ještě server. Tomu se také věnuji. Pro webové hry je programovaný v NodeJS.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="contact" class="section section-contact">
+        <div class="indent">
+          <h2 class="contact-title">Zaujal jsem vás?</h2>
+          <div class="ch-cell">
+            <p>
+              Kontaktujte mě přímo. Můžete k tomu využít jak sociálních sítí, tak přímo i můj email.
+            </p>
+            <p>
+              Email: <a href="mailto:honza@charamza.cz">honza@charamza.cz</a> - pokud si spambot, tak mi nic neposílej ;)
+            </p>
+            <h3>Sociální sítě</h3>
+            <p>
+              <div class="contact-social">
+                <a target="_BLANK" href="https://facebook.com/honza.charamza" class="contact-social-item contact-social-facebook">
+                  <img src="img/facebook.png" width="24" height="24" alt="Facebook icon">
+                </a>
+                <a target="_BLANK" href="https://www.youtube.com/channel/UCzXNKuGAzICs-E5nAPrTAzg" class="contact-social-item contact-social-youtube">
+                  <img src="img/youtube.png" width="24" height="24" alt="Youtube icon">
+                </a>
+                <a target="_BLANK" href="https://www.instagram.com/chrazamza/" class="contact-social-item contact-social-instagram">
+                  <img src="img/instagram.png" width="24" height="24" alt="Instagram icon">
+                </a>
+                <a target="_BLANK" href="https://twitter.com/chrazamza" class="contact-social-item contact-social-twitter">
+                  <img src="img/twitter.png" width="24" height="24" alt="Twitter icon">
+                </a>
+                <a target="_BLANK" href="https://www.linkedin.com/in/charamza/" class="contact-social-item contact-social-linkedin">
+                  <img src="img/linkedin.png" width="24" height="24" alt="Linkedin icon">
+                </a>
+              </div>
+            </p>
+          </div>
+          <div class="ch-cell">
+            <div class="contact-instagram">
+              <!--<script id="instagram-script"></script>
+              <iframe id="instagram-gallery"
+                scrolling="no" allowtransparency="true" class="lightwidget-widget" 
+                style="width:100%;border:0;overflow:hidden;"></iframe>-->
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <div class="indent">
+            <div class="footer-inner">
+              Jan Charamza &copy; 2022
+              <a href="#" class="footer-right">Zpět nahoru</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  	<script type="text/javascript" src="app.min.js"></script>
+  </body>
+</html>
