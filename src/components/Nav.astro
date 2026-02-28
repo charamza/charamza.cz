@@ -1,0 +1,108 @@
+---
+interface Props {
+  variant?: "default" | "blog";
+}
+
+const { variant = "default" } = Astro.props;
+---
+
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="nav-monogram">HC</div>
+    <span class="nav-name">Charamza.cz</span>
+  </a>
+  <div class="nav-links">
+    <!-- {variant == "blog" ? <a href="/">Home</a> : null} -->
+    <a href="/#about">About</a>
+    <a href="/blog">Case studies</a>
+    <a href="/#contact">Contact</a>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 32px;
+    max-width: 1200px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-monogram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--amber);
+    font-family: "Newsreader", serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .nav-name {
+    font-family: "Newsreader", serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .nav-links a {
+    font-family: "Inter", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 768px) {
+    .nav {
+      padding: 16px 24px;
+    }
+
+    .nav-name {
+      display: none;
+    }
+
+    .nav-monogram {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      font-size: 10px;
+    }
+
+    .nav-links {
+      gap: 20px;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+    }
+
+    .nav-back {
+      font-size: 13px;
+    }
+  }
+</style>
