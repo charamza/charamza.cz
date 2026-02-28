@@ -1,0 +1,139 @@
+<footer class="footer-block">
+  <div class="footer-top">
+    <div class="footer-left">
+      <div class="footer-logo-row">
+        <div class="footer-monogram">HC</div>
+        <span class="footer-name">Honza Charamza</span>
+      </div>
+      <p class="footer-tagline">Building thoughtful digital<br />products since 2018.</p>
+    </div>
+    <div class="footer-right">
+      <div class="footer-col">
+        <span class="footer-col-title">NAVIGATE</span>
+        <a href="/#about">About</a>
+        <a href="/blog">Case studies</a>
+        <a href="/#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">CONNECT</span>
+        <a href="https://github.com/charamza">GitHub &nbsp;↗</a>
+        <a href="https://www.linkedin.com/in/charamza/">LinkedIn &nbsp;↗</a>
+        <a href="https://x.com/chrazamza">Twitter &nbsp;↗</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-block {
+    background: #1a1a1a;
+    border-radius: 16px;
+    padding: 56px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .footer-logo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer-monogram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: var(--amber);
+    font-family: "Newsreader", serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 1px;
+  }
+
+  .footer-name {
+    font-family: "Newsreader", serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #ffffff;
+  }
+
+  .footer-tagline {
+    font-family: "Newsreader", serif;
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 400;
+    color: #666666;
+    line-height: 1.5;
+    max-width: 280px;
+  }
+
+  .footer-right {
+    display: flex;
+    gap: 64px;
+    width: 50%;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+  }
+
+  .footer-col-title {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #555555;
+  }
+
+  .footer-col a {
+    font-size: 14px;
+    font-weight: 400;
+    color: #999999;
+    transition: color 0.2s;
+  }
+
+  .footer-col a:hover {
+    color: #cccccc;
+  }
+
+  @media (max-width: 768px) {
+    .footer-block {
+      border-radius: 12px;
+      padding: 32px 24px;
+    }
+
+    .footer-top {
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .footer-right {
+      gap: 24px;
+      flex-direction: column;
+    }
+
+    .footer-tagline {
+      max-width: 100%;
+    }
+  }
+</style>

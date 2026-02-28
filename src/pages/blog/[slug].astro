@@ -1,0 +1,511 @@
+---
+import { getCollection } from "astro:content";
+import FooterBlock from "../../components/FooterBlock.astro";
+import Divider from "../../components/mdx/Divider.astro";
+import Metrics from "../../components/mdx/Metrics.astro";
+import Screenshots from "../../components/mdx/Screenshots.astro";
+import Nav from "../../components/Nav.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  function parseStartDate(s: string | undefined): Date {
+    if (!s) return new Date(0);
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? new Date(0) : d;
+  }
+
+  const caseStudies = await getCollection("work");
+  const sorted = [...caseStudies].sort(
+    (a, b) => parseStartDate(b.data.startDate).getTime() - parseStartDate(a.data.startDate).getTime(),
+  );
+  return sorted.map((entry, index) => ({
+    params: { slug: entry.slug },
+    props: { entry, nextEntry: sorted[index + 1] ?? null },
+  }));
+}
+
+const { entry, nextEntry } = Astro.props;
+const { Content, headings } = await entry.render();
+const { title, subtitle, tags, date, readTime, coverImage, status, startDate, url } = entry.data;
+const nextArticle = nextEntry
+  ? { href: `/blog/${nextEntry.slug}`, title: nextEntry.data.title, desc: nextEntry.data.subtitle }
+  : null;
+
+const statusLabel: Record<string, string> = {
+  active: "Active",
+  paused: "Paused",
+  archived: "Archived",
+};
+
+const tocHeadings = headings.filter((h) => h.depth === 2);
+---
+
+<BaseLayout title={`${title} | Honza Charamza`}>
+  <Nav variant="blog" />
+
+  <section class="article-hero">
+    <div class="cover-image">
+      <img src={coverImage} alt={title} />
+    </div>
+    <div class="meta-section">
+      <div class="tags-row">
+        {tags.map((tag) => <span class="tag">{tag}</span>)}
+      </div>
+      <h1 class="article-title">{title}</h1>
+      <p class="article-subtitle">{subtitle}</p>
+      <div class="author-row">
+        <div class="author-avatar">HC</div>
+        <div class="author-info">
+          <span class="author-name">Honza Charamza</span>
+          <span class="author-meta">{date} · {readTime}</span>
+        </div>
+      </div>
+      {
+        (status || startDate || url) && (
+          <div class="project-meta">
+            {status && (
+              <div class="project-meta-item">
+                <span class="project-meta-label">STATUS</span>
+                <span class="project-meta-value">
+                  <span class={`status-dot status-dot-${status}`} />
+                  {statusLabel[status]}
+                </span>
+              </div>
+            )}
+            {startDate && (
+              <div class="project-meta-item">
+                <span class="project-meta-label">STARTED</span>
+                <span class="project-meta-value">{startDate}</span>
+              </div>
+            )}
+            {url && (
+              <div class="project-meta-item">
+                <span class="project-meta-label">WEBSITE</span>
+                <a class="project-meta-value project-meta-link" href={url} target="_blank" rel="noopener">
+                  {new URL(url).hostname} ↗
+                </a>
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <div class="case-study-layout">
+    {
+      tocHeadings.length > 0 && (
+        <aside class="article-sidebar">
+          <span class="toc-label">ON THIS PAGE</span>
+          <nav class="toc-list">
+            {tocHeadings.map((h) => (
+              <a href={`#${h.slug}`}>{h.text}</a>
+            ))}
+          </nav>
+        </aside>
+      )
+    }
+    <div class="article-content">
+      <Content components={{ Metrics, Screenshots, Divider }} />
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  {
+    nextArticle && (
+      <a href={nextArticle.href} class="next-article">
+        <div class="next-article-content">
+          <span class="next-article-label">NEXT ARTICLE</span>
+          <h3 class="next-article-title">{nextArticle.title}</h3>
+          <p class="next-article-desc">{nextArticle.desc}</p>
+        </div>
+        <span class="next-article-arrow">→</span>
+      </a>
+    )
+  }
+
+  <div class="footer-wrap">
+    <FooterBlock />
+  </div>
+</BaseLayout>
+
+<style>
+  /* ===== Article Hero ===== */
+  .article-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 40px 32px 48px;
+    max-width: 1200px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .cover-image {
+    width: 100%;
+    aspect-ratio: 1200/630;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .cover-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .meta-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .tags-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .article-title {
+    font-family: "Newsreader", serif;
+    font-size: 48px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.15;
+    max-width: 800px;
+  }
+
+  .article-subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+    max-width: 700px;
+  }
+
+  .author-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .author-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    background: var(--amber);
+    font-family: "Newsreader", serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+
+  .author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .author-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .author-meta {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .project-meta {
+    display: flex;
+    gap: 48px;
+    padding-top: 20px;
+  }
+
+  .project-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .project-meta-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+  }
+
+  .project-meta-value {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .status-dot-active {
+    background: #22c55e;
+  }
+  .status-dot-paused {
+    background: var(--amber);
+  }
+  .status-dot-archived {
+    background: var(--text-muted);
+  }
+
+  .project-meta-link {
+    /* color: var(--amber); */
+    color: var(--text-primary);
+    transition: opacity 0.2s;
+  }
+
+  .project-meta-link:hover {
+    opacity: 0.75;
+  }
+
+  /* ===== Case Study Layout (sidebar + content) ===== */
+  .case-study-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 80px;
+    padding: 64px 32px;
+    max-width: 1200px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .article-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 32px;
+    align-self: start;
+  }
+
+  .toc-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+  }
+
+  .toc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .toc-list a {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    transition: color 0.2s;
+  }
+
+  .toc-list a:hover,
+  .toc-list a.active {
+    color: var(--amber);
+    font-weight: 500;
+  }
+
+  /* ===== Article Content (MDX prose) ===== */
+  .article-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+  }
+
+  .article-content :global(h2) {
+    font-family: "Newsreader", serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-top: 20px;
+  }
+
+  .article-content :global(p) {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.75;
+  }
+
+  .article-content :global(blockquote) {
+    padding: 24px 0 24px 32px;
+    border-left: 3px solid var(--amber);
+  }
+
+  .article-content :global(blockquote p) {
+    font-family: "Newsreader", serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .article-content :global(pre) {
+    border-radius: 10px;
+    padding: 24px 28px;
+    overflow-x: auto;
+  }
+
+  .article-content :global(pre code) {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  /* ===== Next Article ===== */
+  .next-article {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 64px 32px;
+    max-width: 1200px;
+    margin-inline: auto;
+    width: 100%;
+    transition: background 0.2s;
+  }
+
+  .next-article-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .next-article-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+  }
+
+  .next-article-title {
+    font-family: "Newsreader", serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .next-article-desc {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+    max-width: 500px;
+  }
+
+  .next-article-arrow {
+    font-size: 32px;
+    color: var(--amber);
+  }
+
+  /* ===== Footer Wrap ===== */
+  .footer-wrap {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding: 0 32px 48px;
+    width: 100%;
+  }
+
+  /* ===== Responsive — Mobile (< 768px) ===== */
+  @media (max-width: 768px) {
+    .article-hero {
+      padding: 24px 24px 40px;
+      gap: 28px;
+    }
+
+    .cover-image {
+      height: 240px;
+      border-radius: 12px;
+    }
+
+    .article-title {
+      font-size: 32px;
+    }
+
+    .article-subtitle {
+      font-size: 16px;
+    }
+
+    .case-study-layout {
+      grid-template-columns: 1fr;
+      padding: 40px 24px;
+      gap: 32px;
+    }
+
+    .article-sidebar {
+      display: none;
+    }
+
+    .next-article {
+      padding: 48px 24px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .next-article-title {
+      font-size: 20px;
+    }
+
+    .next-article-desc {
+      font-size: 14px;
+    }
+
+    .next-article-arrow {
+      font-size: 24px;
+    }
+
+    .footer-wrap {
+      padding: 0 24px 32px;
+    }
+  }
+</style>
+
+<script>
+  const headings = Array.from(document.querySelectorAll(".article-content h2"));
+  const tocLinks = Array.from(document.querySelectorAll(".toc-list a"));
+
+  if (headings.length && tocLinks.length) {
+    function updateToc() {
+      const triggerPoint = window.innerHeight * 0.25;
+      let activeId = headings[0].id;
+
+      for (const heading of headings) {
+        if (heading.getBoundingClientRect().top <= triggerPoint) {
+          activeId = heading.id;
+        }
+      }
+
+      tocLinks.forEach((link) => {
+        link.classList.toggle("active", link.getAttribute("href") === `#${activeId}`);
+      });
+    }
+
+    window.addEventListener("scroll", updateToc, { passive: true });
+    updateToc();
+  }
+</script>

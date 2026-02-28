@@ -1,0 +1,121 @@
+---
+title: 'Mailloop: Email Testing Built Out of Necessity'
+subtitle: 'How a Mailtrap price hike pushed me to build my own email testing platform and my first real attempt at turning a side project into a sustainable business.'
+tags: ['Side Project', 'SMTP', 'SaaS']
+date: 'Feb 2026'
+readTime: '9 min read'
+# coverImage: 'https://images.unsplash.com/photo-1555421689-d68471e189f2?w=1400&h=480&fit=crop'
+coverImage: '/imgs/mailloop/cover.jpg'
+status: 'active'
+startDate: 'October 2025'
+url: 'https://mailloop.io'
+featuredIndex: 0
+---
+
+It started with an invoice. As these things tend to.
+
+Mailtrap, our go-to for email testing, decided to reprice themselves into a completely different market. I'm not going to pretend I wasn't annoyed. The jump was steep enough that I found myself doing the math and thinking, fine, how hard is it to just build one of these myself?
+
+The honest answer is: a dummy SMTP server isn't hard at all. I had a proof of concept up in under thirty minutes using `nodemailer`. It captured incoming messages, didn't deliver them anywhere, and worked on the first try. Which, if you've been writing software for any length of time, you know is not actually a good sign.
+
+First try working means you haven't hit the hard parts yet.
+
+## So I decided to make it harder
+
+I could've stopped at the PoC. But I had two other things I wanted out of this. First, a proper SDK that would make email testing painless for future projects I build that touch email. Second, and this is the part more interesting to me personally: I wanted to try building something sustainable. Not open source, not "free tier only," not a side project that slowly rots on GitHub. A real service with paying customers and enough reliability that people could depend on it.
+
+Whether I'd pull that off was a separate question. But I'd never know without trying.
+
+> "I want to build something people would be willing to pay for. Not because they have to, but because it moves the project to something more sustainable."
+
+<Divider />
+
+<Metrics
+  label="SOME ACTUAL STATISTICS"
+  items={[
+    { value: '10+', label: 'Registered accounts' },
+    { value: '30 000+', label: 'Received emails' },
+    { value: '~99.9%', label: 'Uptime' },
+  ]}
+  withoutBottom
+/>
+
+<Divider />
+
+## From proof of concept to something real
+
+The bare-bones server grew into a proper processing pipeline. Each incoming email goes through connection handshake, sender verification, rate limiting, and message parsing with a size cap. Nothing revolutionary, but each step is distinct and independently testable, which matters a lot when you're chasing down an edge case at midnight and can't remember what you changed last.
+
+I started with the Bun runtime. TypeScript support without extra config, faster cold starts, good benchmarks. Made sense. What it didn't handle well was TLS connections. After a long afternoon with `openssl s_client` and packet captures I traced it back to a known Bun bug with TLS handshakes. Switched back to plain Node.js. Sometimes the boring choice is the right one.
+
+## Three projects, one repo
+
+As the codebase filled out, it split naturally into three packages inside a monorepo.
+
+**The frontend** runs on Astro, deployed as serverless on Vercel. I've been writing React and Next.js apps for years and that's still my mental default, but Astro made more sense here. What sold me was something almost embarrassingly simple: when you load a page, it's an actual full page load. No client-side router, no hydration overhead, no JavaScript shipped for the sake of it. For a tool developers check between test runs, fast is a feature.
+
+**The SMTP server** lives on dedicated infrastructure and runs constantly. That's non-negotiable for SMTP since there's no such thing as spinning up on demand. And since it has to be running all the time anyway, I colocated a WebSocket server on the same process. When a new email comes in it gets pushed to the browser immediately. No polling, no manual refresh.
+
+**The API server** is intentionally separate from SMTP. If the API gets hammered with requests, I don't want that affecting email ingestion in any way. Incoming emails are the one thing in this system that cannot be slow or dropped.
+
+<Divider />
+
+<Screenshots
+  label="ARCHITECTURE"
+  caption="<b>Left:</b> The three-service monorepo architecture (frontend, SMTP + WebSocket server, and API server run independently). <b>Right:</b> Real-time inbox view showing emails the moment they arrive."
+  items={[
+    { placeholder: 'Monorepo architecture diagram', src: '/imgs/mailloop/architecture.png' },
+    { placeholder: 'Real-time inbox UI screenshot', src: '/imgs/mailloop/sandbox.png' },
+  ]}
+/>
+
+<Divider />
+
+## The waitFor function
+
+The event-driven architecture underneath all of this does more than power real-time inbox updates. It makes the most useful SDK feature possible: `waitFor`.
+
+If you're writing integration tests for anything that sends email (signups, password resets, order confirmations), you call `waitFor` and it blocks until the matching email shows up. No `setTimeout` hacks, no polling loop, no test that passes locally and fails in CI because the timing was slightly off. The whole thing took surprisingly little code to implement. Usually a good sign about the foundation.
+
+```ts
+// Send email via SMTP to sandbox
+await transporter.sendMail({
+  from: 'welcome@yourservice.com',
+  to: sandbox.emailAddress,
+  subject: `Welcome email`,
+  text: `Welcome to our service, ...`,
+});
+
+// Wait for email using SDK (or throw when not received)
+const email = await client.emails.waitFor(sandboxId, { subject, timeout: 5_000 });
+```
+
+## The part that ate several weekends
+
+Running a single SMTP server is fine. Running multiple instances behind a load balancer is where the fun starts.
+
+The setup is Docker Swarm with Traefik. Standard enough, except basically every tutorial and piece of documentation out there assumes you're routing HTTP traffic on ports 80 and 443. SMTP uses ports 25, 465, 587, and 2525. Traefik's TCP routing documentation for non-HTTP ports is, let's say, sparse.
+
+Then there's IP forwarding. Rate limiting needs to know who's sending. In HTTP you grab `X-Forwarded-For` and move on. SMTP is raw TCP, there's no such header. The answer is Proxy Protocol v2, which prepends connection metadata at the TCP level before the actual payload. Both Traefik and the SMTP server have to be explicitly configured to use it. Simple once you know the thing exists, but I spent more time discovering it exists than actually implementing it.
+
+## On payments and tax law
+
+I started with Stripe. Everyone starts with Stripe.
+
+The catch nobody mentions upfront: if you're a solo developer in the Czech Republic, you're personally responsible for tax compliance in every country where you have customers. VAT across EU member states, sales tax rules that vary by US state, and a growing list of other jurisdictions. For a project that hasn't made a single sale yet, that's quite a lot to take on.
+
+I switched to PolarSH. They operate as a Merchant of Record, meaning they collect the payments, handle the taxes globally, and pass along what's left. I only deal with Czech obligations. For a bootstrapped project this is genuinely the difference between something viable and something that becomes a compliance headache before it has any users.
+
+## The SDK and the status page
+
+The NPM package is a thin wrapper that gives you a clean API for email assertions inside your test suite. Install it, point it at a Mailloop inbox, done.
+
+The status page runs on the same SDK. Every few minutes it sends a real email, waits for it to arrive, and reports whether everything worked. The monitoring code is public so users can see exactly what's being tested and how. If something goes down you're not just looking at a red dot. You can see what broke and why.
+
+## What I actually learned
+
+Building this project was a really fun experience. It is ready to serve real customers without having to rely on expensive infrastructure like K8S and managed cloud. The next steps for me will be to try to move the needle on online marketing and business management.
+
+The project is built to last. Time will tell how far-fetched the decisions were, but the infrastructure is set up to handle it (or atleast report ongoing problems).
+
+If you're building something that sends emails, give [mailloop.io](https://mailloop.io) a try. There's a generous free plan.

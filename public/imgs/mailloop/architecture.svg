@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 460" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <marker id="a1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#d97706"/>
+    </marker>
+    <marker id="a2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#c0c0c0"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="860" height="460" fill="#fafaf8"/>
+
+  <!-- Dedicated server boundary -->
+  <rect x="75" y="145" width="280" height="275" rx="8" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="6,4"/>
+  <text x="87" y="162" fill="#ccc" font-size="9" letter-spacing="1.5" font-weight="500">DEDICATED SERVER</text>
+
+  <!-- Column headers -->
+  <text x="215" y="22" text-anchor="middle" fill="#ccc" font-size="9.5" letter-spacing="2" font-weight="500">EMAIL INGESTION</text>
+  <text x="645" y="22" text-anchor="middle" fill="#ccc" font-size="9.5" letter-spacing="2" font-weight="500">WEB INTERFACE</text>
+
+  <!-- === BOXES === -->
+
+  <!-- Your App -->
+  <rect x="115" y="35" width="200" height="55" rx="6" fill="#fff" stroke="#e5e5e5" stroke-width="1.5"/>
+  <text x="215" y="59" text-anchor="middle" fill="#1a1a1a" font-size="13" font-weight="600">Your App</text>
+  <text x="215" y="78" text-anchor="middle" fill="#aaa" font-size="11">nodemailer, etc.</text>
+
+  <!-- Traefik -->
+  <rect x="95" y="165" width="240" height="65" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="215" y="190" text-anchor="middle" fill="#1a1a1a" font-size="13" font-weight="600">Traefik</text>
+  <text x="215" y="210" text-anchor="middle" fill="#888" font-size="11">Docker Swarm · TCP routing · Proxy Protocol v2</text>
+
+  <!-- SMTP Server -->
+  <rect x="95" y="305" width="240" height="95" rx="6" fill="#fff" stroke="#e5e5e5" stroke-width="1.5"/>
+  <text x="215" y="330" text-anchor="middle" fill="#1a1a1a" font-size="13" font-weight="600">SMTP Server</text>
+  <text x="215" y="349" text-anchor="middle" fill="#aaa" font-size="11">Node.js · always-on</text>
+  <rect x="143" y="358" width="144" height="26" rx="4" fill="#fafaf8" stroke="#e5e5e5" stroke-width="1"/>
+  <text x="215" y="376" text-anchor="middle" fill="#555" font-size="11">WebSocket Server</text>
+
+  <!-- Browser -->
+  <rect x="545" y="35" width="200" height="55" rx="6" fill="#fff" stroke="#e5e5e5" stroke-width="1.5"/>
+  <text x="645" y="59" text-anchor="middle" fill="#1a1a1a" font-size="13" font-weight="600">Developer Browser</text>
+  <text x="645" y="78" text-anchor="middle" fill="#aaa" font-size="11">inbox · real-time view</text>
+
+  <!-- Frontend -->
+  <rect x="545" y="165" width="200" height="65" rx="6" fill="#fff" stroke="#e5e5e5" stroke-width="1.5"/>
+  <text x="645" y="190" text-anchor="middle" fill="#1a1a1a" font-size="13" font-weight="600">Frontend</text>
+  <text x="645" y="210" text-anchor="middle" fill="#aaa" font-size="11">Astro · Vercel Serverless</text>
+
+  <!-- API Server -->
+  <rect x="545" y="305" width="200" height="65" rx="6" fill="#fff" stroke="#e5e5e5" stroke-width="1.5"/>
+  <text x="645" y="330" text-anchor="middle" fill="#1a1a1a" font-size="13" font-weight="600">API Server</text>
+  <text x="645" y="349" text-anchor="middle" fill="#aaa" font-size="11">Node.js · load isolated</text>
+  <text x="645" y="364" text-anchor="middle" fill="#aaa" font-size="11">accounts · inboxes</text>
+
+  <!-- === ARROWS === -->
+
+  <!-- Your App → Traefik -->
+  <line x1="215" y1="90" x2="215" y2="163" stroke="#d97706" stroke-width="1.5" marker-end="url(#a1)"/>
+  <rect x="222" y="114" width="72" height="16" rx="2" fill="#fafaf8"/>
+  <text x="258" y="126" text-anchor="middle" fill="#d97706" font-size="10">:25 :465 :587</text>
+
+  <!-- Traefik → SMTP -->
+  <line x1="215" y1="230" x2="215" y2="303" stroke="#d97706" stroke-width="1.5" marker-end="url(#a1)"/>
+
+  <!-- Browser → Frontend -->
+  <line x1="645" y1="90" x2="645" y2="163" stroke="#c0c0c0" stroke-width="1.5" marker-end="url(#a2)"/>
+  <rect x="652" y="114" width="42" height="16" rx="2" fill="#fafaf8"/>
+  <text x="673" y="126" text-anchor="middle" fill="#aaa" font-size="10">HTTPS</text>
+
+  <!-- Frontend → API -->
+  <line x1="645" y1="230" x2="645" y2="303" stroke="#c0c0c0" stroke-width="1.5" marker-end="url(#a2)"/>
+  <rect x="652" y="255" width="32" height="16" rx="2" fill="#fafaf8"/>
+  <text x="668" y="267" text-anchor="middle" fill="#aaa" font-size="10">REST</text>
+
+  <!-- SMTP ↔ API: load isolated, dashed -->
+  <line x1="335" y1="347" x2="543" y2="347" stroke="#e5e5e5" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <rect x="390" y="333" width="78" height="16" rx="2" fill="#fafaf8"/>
+  <text x="429" y="345" text-anchor="middle" fill="#ccc" font-size="9" letter-spacing="0.5">load isolated</text>
+
+  <!-- WebSocket: SMTP Server → Browser, curved -->
+  <path d="M 335,352 C 460,352 460,62 543,62" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#a1)"/>
+  <rect x="450" y="196" width="74" height="16" rx="2" fill="#fafaf8"/>
+  <text transform="translate(487, 207) rotate(-70)" fill="#d97706" font-size="10" text-anchor="middle">WebSocket</text>
+</svg>

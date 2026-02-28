@@ -1,0 +1,104 @@
+---
+title: 'City Wars: An Online GTA Clone'
+subtitle: 'A browser-based multiplayer IO game I built for my graduation project, inspired by the original top-down GTA from 1997.'
+tags: ['Game Dev', 'WebGL', 'Multiplayer']
+date: 'Jun 2020'
+readTime: '3 min read'
+coverImage: '/imgs/citywars/cover.jpg'
+coverImagePosition: 'right'
+status: 'archived'
+startDate: 'May 2018'
+featuredIndex: 2
+---
+
+For my high school graduation project I wanted to build something I'd actually enjoy working on. A browser-based multiplayer game in the style of the original GTA from 1997 seemed like no-brainer.
+
+## Proving it was possible
+
+Before committing to the full project I built a quick throwaway prototype called [World of Osenice](https://github.com/charamza/world-of-osenice). Just green circles, a server, and WebSocket sync. Not a game, really. More of a sanity check that real-time multiplayer in the browser was actually doable before spending months on it.
+
+<Divider />
+
+<Screenshots
+  label="WORLD OF OSENICE POC"
+  caption="The throwaway prototype. Multiplayer worked. Everything else was a placeholder."
+  items={[
+    { src: '/imgs/citywars/world-of-osenice.png', alt: 'World of Osenice prototype' },
+  ]}
+/>
+
+<Divider />
+
+
+It was. So I started the real thing.
+
+Stack for the real deal: Dart (compiled to JS) on the client, WebGL for rendering without any game engine, Node.js with Socket.IO on the server. City maps designed in Tiled, building models from Blender.
+
+## The textured version (slow)
+
+The first real version of Citywars tried to look like actual GTA. Textured tiles, brick buildings, proper streets. It looked pretty good and ran at about 12 FPS. WebGL without culling or batching will do that.
+
+<Divider />
+
+<Screenshots
+  label="FIRST ATTEMPT"
+  caption="Left: The textured city. Right: Designing the map layout in Tiled."
+  items={[
+    { src: '/imgs/citywars/first-attempts.png', alt: 'First textured version' },
+    { src: '/imgs/citywars/map-editor.png', alt: 'Tiled map editor' },
+  ]}
+/>
+
+<Divider />
+
+## The minimalist phase (ugly)
+
+Stripped everything back to flat colors to fix performance. It worked, but now it looked like a geometry test. Roads were especially bad because diagonal cuts between tiles left obvious seams.
+
+<Divider />
+
+<Screenshots
+  label="MINIMALIST PHASE"
+  caption="Performance fixed, aesthetics destroyed."
+  items={[
+    { src: '/imgs/citywars/simple2.png', alt: 'Minimal flat version' },
+    { src: '/imgs/citywars/simple1.png', alt: 'Minimal version with 3D buildings' },
+  ]}
+/>
+
+<Divider />
+
+## The final version
+
+Landed somewhere in between. Pixel art sprites for players and cars, proper city tilemap, terrain variation, 3D buildings in 2.5D. It finally looked like something worth playing.
+
+<Divider />
+
+<Screenshots
+  label="FINAL GAME"
+  caption="The shipped version. Two different map areas."
+  items={[
+    { src: '/imgs/citywars/actual1.png', alt: 'Final game version' },
+    { src: '/imgs/citywars/actual2.png', alt: 'Final game version desert area' },
+  ]}
+/>
+
+<Divider />
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px;">
+  <iframe
+    src="https://www.youtube.com/embed/NPxLFo_7YEY"
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+    allowfullscreen
+  ></iframe>
+</div>
+
+<Divider />
+
+## What I learned
+
+It shipped with real-time multiplayer, driveable cars, weapons, 2.5D buildings, and a particle system. For a solo school project it came out better than I expected.
+
+The main things it taught me: raw WebGL is a time sink, real-time multiplayer state sync is harder than it looks, and fixing performance late in the project is painful.
+
+And in the end this lead me to a long lasting love of building real-time based systems.

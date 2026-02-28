@@ -1,3 +1,14 @@
 node_modules/
-build/app*.js
+.astro/
+dist/
+.yarn/
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 .DS_Store
+.pnp.cjs
+.pnp.loader.mjs
