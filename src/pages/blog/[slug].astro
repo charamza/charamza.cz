@@ -40,7 +40,12 @@ const statusLabel: Record<string, string> = {
 const tocHeadings = headings.filter((h) => h.depth === 2);
 ---
 
-<BaseLayout title={`${title} | Honza Charamza`}>
+<BaseLayout
+  title={`${title} | Honza Charamza`}
+  description={subtitle}
+  image={coverImage}
+  url={`https://charamza.cz/blog/${entry.slug}`}
+>
   <Nav variant="blog" />
 
   <section class="article-hero">
