@@ -51,7 +51,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
       <div class="tags-row">
         {tags.map((tag) => <span class="tag">{tag}</span>)}
       </div>
-      <h1 class="article-title">{title}</h1>
+      <h1 class="article-title" set:html={title} />
       <p class="article-subtitle">{subtitle}</p>
       <div class="author-row">
         <div class="author-avatar">HC</div>
@@ -325,6 +325,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
   .toc-list a.active {
     color: var(--amber);
     font-weight: 500;
+    letter-spacing: -0.1px;
   }
 
   /* ===== Article Content (MDX prose) ===== */

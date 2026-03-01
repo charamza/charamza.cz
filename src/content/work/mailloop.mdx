@@ -1,62 +1,41 @@
 ---
-title: 'Mailloop: Email Testing Built Out of Necessity'
+title: 'Mailloop: Email Testing Built Out&nbsp;of&nbsp;Necessity'
 subtitle: 'How a Mailtrap price hike pushed me to build my own email testing platform and my first real attempt at turning a side project into a sustainable business.'
 tags: ['Side Project', 'SMTP', 'SaaS']
-date: 'Feb 2026'
+date: 'Mar 2026'
 readTime: '9 min read'
-# coverImage: 'https://images.unsplash.com/photo-1555421689-d68471e189f2?w=1400&h=480&fit=crop'
 coverImage: '/imgs/mailloop/cover.jpg'
 status: 'active'
 startDate: 'October 2025'
 url: 'https://mailloop.io'
-featuredIndex: 0
+featuredIndex: 1
 ---
 
-It started with an invoice. As these things tend to.
+Mailloop.io started as a replacement for Mailtrap after their pricing became untenable for our needs. It turned into something bigger: a full email testing platform with an SDK, real-time previews via WebSocket, and multi-instance SMTP infrastructure. Here's how it came together and what I learned along the way.
 
-Mailtrap, our go-to for email testing, decided to reprice themselves into a completely different market. I'm not going to pretend I wasn't annoyed. The jump was steep enough that I found myself doing the math and thinking, fine, how hard is it to just build one of these myself?
+## Starting point
 
-The honest answer is: a dummy SMTP server isn't hard at all. I had a proof of concept up in under thirty minutes using `nodemailer`. It captured incoming messages, didn't deliver them anywhere, and worked on the first try. Which, if you've been writing software for any length of time, you know is not actually a good sign.
+A proof of concept took about an afternoon. Node.js with `nodemailer` can spin up an SMTP server that accepts connections and stores messages instead of forwarding them. The hard part was never "can I capture emails." The hard part was everything that comes after.
 
-First try working means you haven't hit the hard parts yet.
-
-## So I decided to make it harder
-
-I could've stopped at the PoC. But I had two other things I wanted out of this. First, a proper SDK that would make email testing painless for future projects I build that touch email. Second, and this is the part more interesting to me personally: I wanted to try building something sustainable. Not open source, not "free tier only," not a side project that slowly rots on GitHub. A real service with paying customers and enough reliability that people could depend on it.
-
-Whether I'd pull that off was a separate question. But I'd never know without trying.
+I had two goals beyond just replacing Mailtrap. I wanted a proper SDK, that would eventually make my future projects working with an email integration really E and Z. And I wanted to treat this as a real product with paying customers, not another open source project I'd abandon in six months. Learning how to run proper business was the biggest motivation. In this age, when SaaS projects may lose their releavance, just trying to learn was everything that I really wanted from all of this.
 
 > "I want to build something people would be willing to pay for. Not because they have to, but because it moves the project to something more sustainable."
 
-<Divider />
+## The SMTP processing pipeline
 
-<Metrics
-  label="SOME ACTUAL STATISTICS"
-  items={[
-    { value: '10+', label: 'Registered accounts' },
-    { value: '30 000+', label: 'Received emails' },
-    { value: '~99.9%', label: 'Uptime' },
-  ]}
-  withoutBottom
-/>
+The server processes each incoming message in stages: TCP connection and TLS handshake, sender verification, rate limit check, then message parsing and storage with configurable size limits. Keeping these as distinct steps made it easy to test each one independently and to add new checks later without touching existing logic.
 
-<Divider />
+One early decision that cost me time: I started with the Bun runtime for its native TypeScript support and performance. Bun had a [bug in its TLS implementation](https://github.com/oven-sh/bun/issues/21541) that caused intermittent handshake failures. Diagnosing this involved a lot of `openssl s_client` testing before I could confirm the problem was in the runtime and not my code. Switching to Node.js fixed it immediately. The takeaway: for anything involving TLS/networking at the protocol level, go with the boring, battle-tested option.
 
-## From proof of concept to something real
+## Monorepo architecture
 
-The bare-bones server grew into a proper processing pipeline. Each incoming email goes through connection handshake, sender verification, rate limiting, and message parsing with a size cap. Nothing revolutionary, but each step is distinct and independently testable, which matters a lot when you're chasing down an edge case at midnight and can't remember what you changed last.
+The project splits into three services:
 
-I started with the Bun runtime. TypeScript support without extra config, faster cold starts, good benchmarks. Made sense. What it didn't handle well was TLS connections. After a long afternoon with `openssl s_client` and packet captures I traced it back to a known Bun bug with TLS handshakes. Switched back to plain Node.js. Sometimes the boring choice is the right one.
+**Astro web app** on Vercel. I chose Astro over Next.js (my usual go-to) because the output is genuinely minimal. Server-rendered pages with no framework overhead, no hydration unless explicitly opted in. But mainly, a long lasting framework that doesn't need to show redesigned developer experience every single year. Ideal library to make long lasting project, that I can update every now and then to make sure the dependencies are up-to-date.
 
-## Three projects, one repo
+**SMTP server** on dedicated infrastructure. SMTP requires a persistent process (no cold starts), so the same process also hosts a WebSocket server for real-time email delivery to connected browsers. When the SMTP server processes an email, connected clients see it instantly.
 
-As the codebase filled out, it split naturally into three packages inside a monorepo.
-
-**The frontend** runs on Astro, deployed as serverless on Vercel. I've been writing React and Next.js apps for years and that's still my mental default, but Astro made more sense here. What sold me was something almost embarrassingly simple: when you load a page, it's an actual full page load. No client-side router, no hydration overhead, no JavaScript shipped for the sake of it. For a tool developers check between test runs, fast is a feature.
-
-**The SMTP server** lives on dedicated infrastructure and runs constantly. That's non-negotiable for SMTP since there's no such thing as spinning up on demand. And since it has to be running all the time anyway, I colocated a WebSocket server on the same process. When a new email comes in it gets pushed to the browser immediately. No polling, no manual refresh.
-
-**The API server** is intentionally separate from SMTP. If the API gets hammered with requests, I don't want that affecting email ingestion in any way. Incoming emails are the one thing in this system that cannot be slow or dropped.
+**API server**, separate from SMTP. This is a deliberate load isolation choice. API request spikes can't affect SMTP ingestion. The SMTP server's ability to accept emails is the highest priority in the system. Everything else can queue or degrade gracefully.
 
 <Divider />
 
@@ -71,11 +50,11 @@ As the codebase filled out, it split naturally into three packages inside a mono
 
 <Divider />
 
-## The waitFor function
+## Why not make this real-time?
 
-The event-driven architecture underneath all of this does more than power real-time inbox updates. It makes the most useful SDK feature possible: `waitFor`.
+All three services communicate through events. This architecture was primarily motivated by the real-time WebSocket feature, but it also made the SDK's most useful function almost trivial to implement.
 
-If you're writing integration tests for anything that sends email (signups, password resets, order confirmations), you call `waitFor` and it blocks until the matching email shows up. No `setTimeout` hacks, no polling loop, no test that passes locally and fails in CI because the timing was slightly off. The whole thing took surprisingly little code to implement. Usually a good sign about the foundation.
+`waitFor` lets developers block until a specific email arrives. If you're testing a password reset flow, you trigger the reset, then call `waitFor({ to: "user@test.mailloop.dev" })` and it resolves when the email shows up. No polling loops, no arbitrary delays, no flaky CI. The event system means there's no polling on the server side either. The email arrives, an event fires, the waiting SDK client gets notified.
 
 ```ts
 // Send email via SMTP to sandbox
@@ -90,27 +69,35 @@ await transporter.sendMail({
 const email = await client.emails.waitFor(sandboxId, { subject, timeout: 5_000 });
 ```
 
-## The part that ate several weekends
+## Scaling SMTP behind a&nbsp;load&nbsp;balancer
 
-Running a single SMTP server is fine. Running multiple instances behind a load balancer is where the fun starts.
+This was the most time-consuming infrastructure work. The stack is Docker Swarm with Traefik.
 
-The setup is Docker Swarm with Traefik. Standard enough, except basically every tutorial and piece of documentation out there assumes you're routing HTTP traffic on ports 80 and 443. SMTP uses ports 25, 465, 587, and 2525. Traefik's TCP routing documentation for non-HTTP ports is, let's say, sparse.
+**Problem 1: Non-HTTP TCP routing.** Nearly all Traefik documentation covers HTTP on ports 80/443. SMTP needs ports 25, 465, 587, and 2525. Configuring TCP entrypoints and routers for these ports required piecing together sparse docs and a fair amount of trial and error.
 
-Then there's IP forwarding. Rate limiting needs to know who's sending. In HTTP you grab `X-Forwarded-For` and move on. SMTP is raw TCP, there's no such header. The answer is Proxy Protocol v2, which prepends connection metadata at the TCP level before the actual payload. Both Traefik and the SMTP server have to be explicitly configured to use it. Simple once you know the thing exists, but I spent more time discovering it exists than actually implementing it.
+**Problem 2: Client IP forwarding.** Rate limiting needs the real sender IP. HTTP proxies use `X-Forwarded-For`. SMTP is raw TCP with no equivalent mechanism. The solution: Proxy Protocol v2. The load balancer prepends a binary header with the original client IP before forwarding the TCP connection to the backend. Both Traefik and the SMTP server need explicit configuration to handle this. The implementation was straightforward once I knew what to look for. The discovery process was not.
 
-## On payments and tax law
+## Payments and tax&nbsp;compliance
 
-I started with Stripe. Everyone starts with Stripe.
+I started with Stripe, which is the standard choice for SaaS. The issue: Stripe makes you the merchant of record. As a solo developer in the Czech Republic, that means handling VAT compliance across every EU member state and potentially sales tax in US states. For a bootstrapped product, the accounting overhead is prohibitive.
 
-The catch nobody mentions upfront: if you're a solo developer in the Czech Republic, you're personally responsible for tax compliance in every country where you have customers. VAT across EU member states, sales tax rules that vary by US state, and a growing list of other jurisdictions. For a project that hasn't made a single sale yet, that's quite a lot to take on.
+I switched to Polar, a Merchant of Record service. They handle global tax obligations. I only deal with Czech tax requirements. The tradeoff is less control over the billing experience, but for a project at this stage, that's a good trade.
 
-I switched to PolarSH. They operate as a Merchant of Record, meaning they collect the payments, handle the taxes globally, and pass along what's left. I only deal with Czech obligations. For a bootstrapped project this is genuinely the difference between something viable and something that becomes a compliance headache before it has any users.
+And as my accountant is my really good friend, switching to Polar probably saved our friendship.
 
-## The SDK and the status page
+<Divider />
 
-The NPM package is a thin wrapper that gives you a clean API for email assertions inside your test suite. Install it, point it at a Mailloop inbox, done.
+<Metrics
+  label="SOME ACTUAL STATISTICS"
+  items={[
+    { value: '10+', label: 'Registered accounts' },
+    { value: '30 000+', label: 'Received emails' },
+    { value: '~99.9%', label: 'Uptime' },
+  ]}
+  withoutBottom
+/>
 
-The status page runs on the same SDK. Every few minutes it sends a real email, waits for it to arrive, and reports whether everything worked. The monitoring code is public so users can see exactly what's being tested and how. If something goes down you're not just looking at a red dot. You can see what broke and why.
+<Divider />
 
 ## What I actually learned
 

@@ -111,7 +111,7 @@ if (currentRow.length > 0) cardRows.push({ type: "row", items: currentRow });
                         <span class="tag">{tag}</span>
                       ))}
                     </div>
-                    <h3 class="card-title">{work.data.title}</h3>
+                    <h3 class="card-title" set:html={work.data.title} />
                     <p class="card-desc">{work.data.subtitle}</p>
                     <div class="spacer" />
                     <span class="card-link">View case study →</span>
@@ -128,7 +128,7 @@ if (currentRow.length > 0) cardRows.push({ type: "row", items: currentRow });
                     <span class="tag">{tag}</span>
                   ))}
                 </div>
-                <h3 class="card-title">{row.item.data.title}</h3>
+                <h3 class="card-title" set:html={row.item.data.title} />
                 <p class="card-desc">{row.item.data.subtitle}</p>
                 <div class="spacer" />
                 <span class="card-link">View case study →</span>

@@ -88,7 +88,7 @@ const statusLabel: Record<string, string> = {
                           ))}
                         </div>
                       </div>
-                      <h2 class="entry-title">{title}</h2>
+                      <h2 class="entry-title" set:html={title} />
                       <p class="entry-subtitle">{subtitle}</p>
                       <span class="entry-link">
                         {readTime && <span class="entry-read-time">{readTime}</span>}
